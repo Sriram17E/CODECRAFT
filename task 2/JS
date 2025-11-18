@@ -1,0 +1,56 @@
+let startTime = 0;
+let updatedTime = 0;
+let difference = 0;
+let timerInterval;
+let running = false;
+const display = document.getElementById('display');
+const laps = document.getElementById('laps');
+
+function startStopwatch() {
+  if (!running) {
+    startTime = new Date().getTime() - difference;
+    timerInterval = setInterval(updateTime, 10);
+    running = true;
+  }
+}
+
+function pauseStopwatch() {
+  if (running) {
+    clearInterval(timerInterval);
+    difference = new Date().getTime() - startTime;
+    running = false;
+  }
+}
+
+function resetStopwatch() {
+  clearInterval(timerInterval);
+  running = false;
+  difference = 0;
+  display.textContent = "00:00:00.000";
+  laps.innerHTML = "";
+}
+
+function updateTime() {
+  updatedTime = new Date().getTime() - startTime;
+  display.textContent = formatTime(updatedTime);
+}
+
+function formatTime(ms) {
+  let milliseconds = parseInt((ms % 1000) / 10);
+  let seconds = Math.floor((ms / 1000) % 60);
+  let minutes = Math.floor((ms / (1000 * 60)) % 60);
+  let hours = Math.floor(ms / (1000 * 60 * 60));
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${pad(milliseconds, 3)}`;
+}
+
+function pad(value, width = 2) {
+  return value.toString().padStart(width, "0");
+}
+
+function lapTime() {
+  if (running) {
+    const li = document.createElement("li");
+    li.textContent = display.textContent;
+    laps.appendChild(li);
+  }
+}
